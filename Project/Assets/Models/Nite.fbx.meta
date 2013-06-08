@@ -4,11 +4,58 @@ ModelImporter:
   serializedVersion: 15
   fileIDToRecycleName:
     100000: //RootNode
+    100002: joint1
+    100004: joint10
+    100006: joint11
+    100008: joint12
+    100010: joint13
+    100012: joint18
+    100014: joint19
+    100016: joint2
+    100018: joint20
+    100020: joint21
+    100022: joint22
+    100024: joint23
+    100026: joint24
+    100028: joint25
+    100030: joint26
+    100032: joint3
+    100034: joint4
+    100036: joint5
+    100038: joint6
+    100040: joint7
+    100042: joint8
+    100044: joint9
+    100046: pCube1
     400000: //RootNode
+    400002: joint1
+    400004: joint10
+    400006: joint11
+    400008: joint12
+    400010: joint13
+    400012: joint18
+    400014: joint19
+    400016: joint2
+    400018: joint20
+    400020: joint21
+    400022: joint22
+    400024: joint23
+    400026: joint24
+    400028: joint25
+    400030: joint26
+    400032: joint3
+    400034: joint4
+    400036: joint5
+    400038: joint6
+    400040: joint7
+    400042: joint8
+    400044: joint9
+    400046: pCube1
     2300000: //RootNode
     3300000: //RootNode
     4300000: pCube1
     9500000: //RootNode
+    13700000: pCube1
   materials:
     importMaterials: 1
     materialName: 0

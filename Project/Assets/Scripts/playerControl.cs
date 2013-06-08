@@ -33,7 +33,7 @@ public class playerControl : MonoBehaviour {
 		if(Input.GetKey(KeyCode.A))
 		{
 			transform.Translate(new Vector3(0,0,moveSpeed)*Time.deltaTime);
-			//transform.Rotate(Vector3.up,-rotateSpeed*Time.deltaTime);
+			//transform.Rotate(Vector3.up,-rotateSpeed*Time.deltaTime); //Rotate character
 		}
 					
 		if(Input.GetKey(KeyCode.D))

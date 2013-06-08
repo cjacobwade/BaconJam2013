@@ -4,9 +4,10 @@ using System.Collections;
 public class playerControl : MonoBehaviour {
 	
 	//Objects
-	public GameObject cube;
 	public Camera camera1;
+	public GameObject cube;
 	public GameObject bulb;
+	public GameObject hand;
 	private GameObject clone;
 	
 	#region Camera Control
@@ -139,7 +140,7 @@ public class playerControl : MonoBehaviour {
 				
 				//Start Moving Again
 				
-				//Play soun
+				//Play sound
 			}
 		}
 		#endregion
@@ -147,8 +148,8 @@ public class playerControl : MonoBehaviour {
 	
 	void ThrowBulb()
 	{
-		clone = Instantiate(bulb,transform.position + Vector3.forward,transform.rotation) as GameObject;
-		clone.rigidbody.velocity = transform.TransformDirection(Vector3.right*throwSpeed);
+		clone = Instantiate(bulb,hand.transform.position,transform.rotation) as GameObject;
+		clone.rigidbody.velocity = transform.TransformDirection(new Vector3(1,0,0) *throwSpeed);
 	}
 	
 	void Grounded() //When on the ground

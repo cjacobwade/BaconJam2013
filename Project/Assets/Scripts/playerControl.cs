@@ -7,11 +7,20 @@ public class playerControl : MonoBehaviour {
 	public GameObject cube;
 	public Camera camera1;
 	
-	//Character Control
+	#region Camera Control
+		public float cameraSpeed;//How fast does the cam rotate
+		public float minCameraX;//Max camera vertical rotation
+		public float maxCameraX;//Min camera vertical rotation
+		private float cameraRotationX = 0;//What is the camera's rotation right now (relative to 0)
+		private float yRot;
+        private float zRot;
+	#endregion
+	
+	#region Character Control
 		//Movement
 		public int moveSpeed;
 		public int rotateSpeed;
-		public Vector3 moveDirection;
+		private Vector3 moveDirection;
 	
 		//Jumping
 		public int jumpSpeed;
@@ -20,13 +29,8 @@ public class playerControl : MonoBehaviour {
 	
 		//Throwing
 		public int heldBulbs;
-	
-	//Camera Control
-		public float cameraRotationX = 2.0F;
-    	public float cameraRotationY = 2.0F;
-		public float cameraSpeed;
-		public float yRot;
-        public float zRot;
+		private bool isAiming = false;
+	#endregion
 	
 	// Use this for initialization
 	void Start () {
@@ -37,7 +41,8 @@ public class playerControl : MonoBehaviour {
 	void FixedUpdate () {
 		
 		CameraControl();
-		PlayerControl();
+		if(!isAiming)
+			PlayerControl();
 		if (isGrounded) 
 			IsGrounded();
 		else
@@ -90,6 +95,7 @@ public class playerControl : MonoBehaviour {
 			if(heldBulbs > 0)
 			{
 				//Stop moving
+				isAiming = true;
 				//Draw decal	
 			}
 			else
@@ -104,21 +110,50 @@ public class playerControl : MonoBehaviour {
 			if(heldBulbs > 0)
 			{
 				//Shoot Projectile
+				isAiming = false;
 				//Play soun
 			}
 		}
 	}
 	
-	void CameraControl()
+	void CameraControl()//Controls camera view
 	{
 		yRot = Input.GetAxis("Mouse X");
-		zRot = Input.GetAxis("Mouse Y");
-		//camera1.transform.LookAt(transform);
-//		transform.RotateAround(transform.position,Vector3.up,Time.deltaTime*yRot*rotateSpeed);
-//		transform.RotateAround(transform.position, Vector3.forward,Time.deltaTime*zRot*rotateSpeed);
-		cube.transform.Rotate(new Vector3(0,Time.deltaTime*yRot*rotateSpeed,Time.deltaTime*zRot*rotateSpeed));
-		transform.Rotate(new Vector3(0,Time.deltaTime*yRot*rotateSpeed,Time.deltaTime*zRot*rotateSpeed));
-		cube.transform.rotation = Quaternion.Euler(0,transform.rotation.eulerAngles.y,0);
+		
+		//Rotate Player Controller
+		transform.Rotate(new Vector3(0,Time.deltaTime*yRot*rotateSpeed,0));
 		transform.rotation = Quaternion.Euler(0,transform.rotation.eulerAngles.y,0);
+		
+		//Rotate Player Model
+		cube.transform.Rotate(new Vector3(0,Time.deltaTime*yRot*rotateSpeed,0));
+		cube.transform.rotation = Quaternion.Euler(0,transform.rotation.eulerAngles.y,0);
+		
+		CameraMinMax();//Vertical axis controls
+	}
+	
+	void CameraMinMax()//Correct vertical camera to stay within bounds
+	{
+		if(Input.GetAxis("Mouse Y")>.5)
+			zRot=.5f;
+		else if(Input.GetAxis("Mouse Y")<-.5)
+			zRot=-.5f;
+		else
+			zRot = Input.GetAxis("Mouse Y");
+		
+		if(cameraRotationX >= minCameraX && cameraRotationX <= maxCameraX)
+			{
+				cameraRotationX += zRot;
+				camera1.transform.Rotate(new Vector3(Time.deltaTime*zRot*-rotateSpeed,0,0));
+			}
+		if(cameraRotationX < minCameraX)//if lower than min rotation, correct
+			{
+				camera1.transform.Rotate(new Vector3(Time.deltaTime*.6f*-rotateSpeed,0,0));
+				cameraRotationX += Time.deltaTime*-.3f*-rotateSpeed;
+			}
+		if(cameraRotationX > maxCameraX)//if higher than max rotation, correct
+			{
+				cameraRotationX += Time.deltaTime*.3f*-rotateSpeed;
+				camera1.transform.Rotate(new Vector3(Time.deltaTime*-.6f*-rotateSpeed,0,0));
+			}	
 	}
 }

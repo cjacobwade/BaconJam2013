@@ -24,15 +24,13 @@ public class playerControl : MonoBehaviour {
 	//Camera Control
 		public float cameraRotationX = 2.0F;
     	public float cameraRotationY = 2.0F;
-		private float cameraInit;
 		public float cameraSpeed;
 		public float yRot;
         public float zRot;
-
 	
 	// Use this for initialization
 	void Start () {
-		cameraInit = camera1.transform.rotation.x;
+		
 	}
 	
 	// Update is called once per frame
@@ -114,10 +112,13 @@ public class playerControl : MonoBehaviour {
 	void CameraControl()
 	{
 		yRot = Input.GetAxis("Mouse X");
-        zRot = Input.GetAxis("Mouse Y");
-        camera1.transform.RotateAround(cube.transform.position,new Vector3(0, yRot, 0),cameraSpeed);
-		Ray cameraDirection = new Ray(camera1.transform.position,camera1.transform.eulerAngles);
-		cube.transform.LookAt(cameraDirection.direction,Vector3.zero);
-
+		zRot = Input.GetAxis("Mouse Y");
+		//camera1.transform.LookAt(transform);
+//		transform.RotateAround(transform.position,Vector3.up,Time.deltaTime*yRot*rotateSpeed);
+//		transform.RotateAround(transform.position, Vector3.forward,Time.deltaTime*zRot*rotateSpeed);
+		cube.transform.Rotate(new Vector3(0,Time.deltaTime*yRot*rotateSpeed,Time.deltaTime*zRot*rotateSpeed));
+		transform.Rotate(new Vector3(0,Time.deltaTime*yRot*rotateSpeed,Time.deltaTime*zRot*rotateSpeed));
+		cube.transform.rotation = Quaternion.Euler(0,transform.rotation.eulerAngles.y,0);
+		transform.rotation = Quaternion.Euler(0,transform.rotation.eulerAngles.y,0);
 	}
 }

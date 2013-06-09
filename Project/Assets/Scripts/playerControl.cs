@@ -276,7 +276,13 @@ public class playerControl : MonoBehaviour {
 		}
 		
 		if(other.gameObject.tag == "Finish")
-			print("FUCK");
+		{
+			//If something go to this level
+			Application.LoadLevel(0);
+			//else
+			//Application.loadlevel(0);
+			
+		}
 	}
 	
 	void OnTriggerExit(Collider other)//If leaving collision with stuff

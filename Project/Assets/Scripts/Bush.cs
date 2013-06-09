@@ -18,8 +18,6 @@ public class Bush : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-	
-		print(Vector3.Distance(transform.position,player.transform.position));
 		bulb.transform.Rotate(Vector3.forward,.7f);
 		if(Vector3.Distance(transform.position,player.transform.position) < maxDistance)
 		{

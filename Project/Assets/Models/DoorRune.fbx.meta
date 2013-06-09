@@ -1,15 +1,15 @@
 fileFormatVersion: 2
-guid: bea15a3d745b46b4f8c1c171110cbae2
+guid: c2b28e0bb18dff84787944eb69025577
 ModelImporter:
   serializedVersion: 15
   fileIDToRecycleName:
     100000: //RootNode
+    100002: pasted__pCube1
     400000: //RootNode
-    2300000: //RootNode
-    3300000: //RootNode
-    4300000: pCube2
-    7400000: Press
-    7400002: Pressed
+    400002: pasted__pCube1
+    2300000: pasted__pCube1
+    3300000: pasted__pCube1
+    4300000: pasted__pCube1
     9500000: //RootNode
     11100000: //RootNode
   materials:
@@ -24,49 +24,7 @@ ModelImporter:
     animationPositionError: .5
     animationScaleError: .5
     animationWrapMode: 0
-    clipAnimations:
-    - name: Press
-      takeName: Take 001
-      firstFrame: 1
-      lastFrame: 30
-      wrapMode: 0
-      orientationOffsetY: 0
-      level: 0
-      cycleOffset: 0
-      loop: 0
-      loopBlend: 0
-      loopBlendOrientation: 0
-      loopBlendPositionY: 0
-      loopBlendPositionXZ: 0
-      keepOriginalOrientation: 0
-      keepOriginalPositionY: 1
-      keepOriginalPositionXZ: 0
-      heightFromFeet: 0
-      mirror: 0
-      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
-      curves: []
-      transformMask: []
-    - name: Pressed
-      takeName: Take 001
-      firstFrame: 29.8999996
-      lastFrame: 30
-      wrapMode: 0
-      orientationOffsetY: 0
-      level: 0
-      cycleOffset: 0
-      loop: 0
-      loopBlend: 0
-      loopBlendOrientation: 0
-      loopBlendPositionY: 0
-      loopBlendPositionXZ: 0
-      keepOriginalOrientation: 0
-      keepOriginalPositionY: 1
-      keepOriginalPositionXZ: 0
-      heightFromFeet: 0
-      mirror: 0
-      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
-      curves: []
-      transformMask: []
+    clipAnimations: []
     isReadable: 1
   meshes:
     lODScreenPercentages: []

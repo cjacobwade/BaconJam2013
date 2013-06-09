@@ -55,6 +55,9 @@ public class playerControl : MonoBehaviour {
 	// Update is called once per frame
 	void FixedUpdate () 
 	{
+		if(transform.position.y < -50)
+			Application.LoadLevel(0);
+		moveDirection.y -= gravity * Time.deltaTime;
 		model.animation[ "Walk" ].speed = animSpeed[0];
 		aim = Camera.main.ScreenPointToRay(Input.mousePosition);
 		CameraControl();
@@ -68,7 +71,7 @@ public class playerControl : MonoBehaviour {
 			Grounded();
 		}
 		else
-			moveDirection.y -= gravity * Time.deltaTime;
+			
 		transform.Translate(moveDirection*Time.deltaTime);
 	}
 	
@@ -120,7 +123,14 @@ public class playerControl : MonoBehaviour {
 			if(Input.GetKey(KeyCode.W)||Input.GetKey(KeyCode.A)||Input.GetKey(KeyCode.S)||Input.GetKey(KeyCode.D))
 			{
 				if(isGrounded)
+				{
 					model.animation.Play("Walk");
+					if(heldBulbs > 0)
+						{
+							handOrb.gameObject.renderer.enabled = true;
+							handOrb.gameObject.light.enabled = true;
+						}
+				}
 			}
 			else
 			{
@@ -165,7 +175,8 @@ public class playerControl : MonoBehaviour {
 		
 		if(Input.GetMouseButton(0))
 		{
-				Windup();
+			rigidbody.velocity = Vector3.zero;
+			Windup();
 		}
 
 		else
@@ -180,6 +191,9 @@ public class playerControl : MonoBehaviour {
 	{
 		if(heldBulbs > 0)
 		{
+			
+			handOrb.gameObject.renderer.enabled = true;
+				handOrb.gameObject.light.enabled = true;
 			if(!isAiming)
 				model.animation.Play("Windup");
 			isAiming = true;
@@ -200,25 +214,21 @@ public class playerControl : MonoBehaviour {
 	
 	void ThrowBulb()
 	{
-		if(orbIndex >= orbNumber)
+		if(orbIndex >= orbNumber-1)
 			orbIndex = 0;
-		if(orbIndex < orbNumber)
-		{
+		else if(orbIndex < orbNumber-1)
 			orbIndex++;
-			Destroy(clone[orbIndex]);
-	
-		}
 		if(Physics.Raycast(aim,out hit,Mathf.Infinity,layerMask))//For this to land, there needs to be colliders on the other objects
 			{
 				print(Input.mousePosition);
 			}
 		if(heldBulbs > 0)
 		{
-			
 			isAiming = false;
 			//Shoot Projectile
 			model.animation[ "Throw" ].speed = animSpeed[3];
 			model.animation.Play("Throw");
+			Destroy(clone[orbIndex]);
 			clone[orbIndex] = Instantiate(bulb,hand.transform.position,transform.rotation) as GameObject;
 			if(throwHeight < .7f)
 				clone[orbIndex].rigidbody.velocity = transform.TransformDirection(new Vector3(1,0,0));
@@ -252,12 +262,8 @@ public class playerControl : MonoBehaviour {
 	{
 		if(other.gameObject.tag == "Ground")//if the ground
 			isGrounded = true;
-		
-		//Wall Collisions
 		if(other.gameObject.tag == "Wall")
-			print("Wall!");
-			moveDirection.x = -moveSpeed;
-		//Object Collisions
+			moveDirection.y -= gravity * Time.deltaTime;
 		
 		if(other.gameObject.tag == "Bush")
 		{
@@ -266,10 +272,12 @@ public class playerControl : MonoBehaviour {
 		}
 	}
 	
-//	void OnTriggerExit(Collider other)//If leaving collision with stuff
-//	{
-//		if(other.gameObject.tag == "Ground")
-//			isGrounded = false;
-//	}	
+	void OnTriggerExit(Collider other)//If leaving collision with stuff
+	{
+		if(other.gameObject.tag == "Ground")
+			isGrounded = false;
+		moveDirection.y -= gravity * Time.deltaTime;
+		rigidbody.velocity = Vector3.zero;
+	}	
 	#endregion
 }

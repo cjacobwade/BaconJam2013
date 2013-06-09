@@ -31,6 +31,7 @@ public class Door : MonoBehaviour {
 		{	
 			animation["Open"].speed = 1;
 			animation.Play("Open");
+			audio.Play();
 			lighter.light.enabled = true;
 			open = true; 
 		}

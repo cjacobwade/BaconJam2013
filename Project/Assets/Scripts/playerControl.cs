@@ -11,21 +11,13 @@ public class playerControl : MonoBehaviour {
 	private GameObject clone;
 		
 	//Animations
-	public enum Stance //Different stances player can be in
-	{
-		Idle,
-		Walk,
-		Windup,
-		Throw,
-		Jump
-	};
-	public Stance playerStance;
+	public float[] animSpeed;
 	
 	#region Camera Control
 		public float cameraSpeed;//How fast does the cam rotate
 		public float minCameraX;//Max camera vertical rotation
 		public float maxCameraX;//Min camera vertical rotation
-		private float cameraRotationX = 0;//What is the camera's rotation right now (relative to 0)
+		public float cameraRotationX = 0;//What is the camera's rotation right now (relative to 0)
 		private float yRot;
         private float zRot;
 	#endregion
@@ -42,8 +34,11 @@ public class playerControl : MonoBehaviour {
 		private bool isGrounded;
 	
 		//Throwing
+		public float throwHeight;
 		public int heldBulbs;
 		private Ray aim;
+		private RaycastHit hit;
+		int layerMask = 1 << 9;
 		public float throwSpeed;
 		private bool isAiming = false;
 	#endregion
@@ -51,13 +46,14 @@ public class playerControl : MonoBehaviour {
 	// Use this for initialization
 	void Start () 
 	{
-		playerStance = Stance.Idle;//Starting stance is idle
+		
 	}
 	
 	// Update is called once per frame
 	void FixedUpdate () 
 	{
-		Debug.DrawRay (camera1.transform.position, transform.TransformDirection(Input.mousePosition)*.5f, Color.red);
+		model.animation[ "Walk" ].speed = animSpeed[0];
+		aim = Camera.main.ScreenPointToRay(Input.mousePosition);
 		CameraControl();
 		PlayerControl();
 		if (isGrounded)
@@ -128,6 +124,7 @@ public class playerControl : MonoBehaviour {
 				}
 				if(!isGrounded)
 				{
+					isAiming = false;
 					if(!model.animation.isPlaying)
 						model.animation.Play("JumpPose");
 				}
@@ -137,7 +134,10 @@ public class playerControl : MonoBehaviour {
 				transform.Translate(new Vector3(moveSpeed,0,0)*Time.deltaTime);
 			
 			if(Input.GetKey(KeyCode.S))
+			{
 				transform.Translate(new Vector3(-moveSpeed*.8f,0,0)*Time.deltaTime);
+				model.animation["Walk"].speed = -animSpeed[0];
+			}
 			
 			if(Input.GetKey(KeyCode.A))
 				transform.Translate(new Vector3(0,0,moveSpeed*.7f)*Time.deltaTime);	
@@ -148,53 +148,66 @@ public class playerControl : MonoBehaviour {
 		}
 		
 		#region Mouse
+		
 		if(Input.GetMouseButton(0))
 		{
-			if(heldBulbs > 0)
-			{
-				//Stop moving
-				if(!isAiming)
-					model.animation.Play("Windup");
-				isAiming = true;
-				if(model.animation["JumpPose"].enabled||!model.animation.isPlaying)
-						model.animation.Play("WindupPose");
-				aim = Camera.main.ScreenPointToRay(Input.mousePosition);
-				//Draw decal	
-			}
-			else
-			{
-				//Display message saying no plants held
-				//Play error sound
-			}
+				Windup();
 		}
-		
-		if(Input.GetMouseButtonUp(0))
+
+		else
 		{
-			if(heldBulbs > 0)
-			{
-				isAiming = false;
-				//Shoot Projectile
-				model.animation.Play("Throw");
+			if(isAiming)
 				ThrowBulb();
-				
-				//Start Moving Again
-				
-				//Play sound
-			}
 		}
 		#endregion
 	}
 	
+	void Windup()
+	{
+		if(heldBulbs > 0)
+		{
+			if(!isAiming)
+				model.animation.Play("Windup");
+			isAiming = true;
+			if(throwHeight<10)
+				throwHeight *= 1.02f;
+			//Stop moving
+			if(model.animation["JumpPose"].enabled||!model.animation.isPlaying)
+				model.animation.Play("WindupPose");
+			//Draw decal	
+		}
+		else
+		{
+			//Display message saying no plants held
+			//Play error sound
+		}
+	}
+	
 	void ThrowBulb()
 	{
-		clone = Instantiate(bulb,hand.transform.position,transform.rotation) as GameObject;
-		clone.rigidbody.velocity = transform.TransformDirection(new Vector3(1,0,0) *throwSpeed);
-		Physics.IgnoreCollision(clone.collider, this.collider);
+		if(Physics.Raycast(aim,out hit,Mathf.Infinity,layerMask))//For this to land, there needs to be colliders on the other objects
+			{
+				print(Input.mousePosition);
+				print("HIT");
+			}
+		if(heldBulbs > 0)
+		{
+			
+			isAiming = false;
+			//Shoot Projectile
+			model.animation[ "Throw" ].speed = animSpeed[3];
+			model.animation.Play("Throw");
+			clone = Instantiate(bulb,hand.transform.position,transform.rotation) as GameObject;
+			clone.rigidbody.velocity = transform.TransformDirection(new Vector3(1,throwHeight/10,0) *throwSpeed);
+			Physics.IgnoreCollision(clone.collider, this.collider);
+			throwHeight = 5;
+			//Play sound
+		}
 	}
 	
 	void Grounded() //When on the ground
 	{
-		print("Is Grounded");
+		//print("Is Grounded");
         moveDirection = new Vector3(0, 0, 0);
         moveDirection = transform.TransformDirection(moveDirection);
         moveDirection *= moveSpeed;
@@ -209,11 +222,13 @@ public class playerControl : MonoBehaviour {
 	#region COLLISIONS
 	void OnTriggerEnter(Collider other)//On collision with stuff
 	{
-		print("hit");
 		if(other.gameObject.tag == "Ground")//if the ground
 			isGrounded = true;
 		
 		//Wall Collisions
+		if(other.gameObject.tag == "Wall")
+			print("Wall!");
+			moveDirection.x = -moveSpeed;
 		//Object Collisions
 	}
 	

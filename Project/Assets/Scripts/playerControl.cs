@@ -43,6 +43,7 @@ public class playerControl : MonoBehaviour {
 	
 		//Throwing
 		public int heldBulbs;
+		private Ray aim;
 		public float throwSpeed;
 		private bool isAiming = false;
 	#endregion
@@ -56,6 +57,7 @@ public class playerControl : MonoBehaviour {
 	// Update is called once per frame
 	void FixedUpdate () 
 	{
+		Debug.DrawRay (camera1.transform.position, transform.TransformDirection(Input.mousePosition)*.5f, Color.red);
 		CameraControl();
 		PlayerControl();
 		if (isGrounded)
@@ -121,8 +123,13 @@ public class playerControl : MonoBehaviour {
 			{
 				if(isGrounded)
 				{
-					if(model.animation["Walk"].enabled||!model.animation.isPlaying)
+					if(model.animation["Walk"].enabled||model.animation["JumpPose"].enabled||!model.animation.isPlaying)
 						model.animation.Play("Idle");
+				}
+				if(!isGrounded)
+				{
+					if(!model.animation.isPlaying)
+						model.animation.Play("JumpPose");
 				}
 			}
 			#region WASD
@@ -146,8 +153,12 @@ public class playerControl : MonoBehaviour {
 			if(heldBulbs > 0)
 			{
 				//Stop moving
+				if(!isAiming)
+					model.animation.Play("Windup");
 				isAiming = true;
-				model.animation.Play("Windup");
+				if(model.animation["JumpPose"].enabled||!model.animation.isPlaying)
+						model.animation.Play("WindupPose");
+				aim = Camera.main.ScreenPointToRay(Input.mousePosition);
 				//Draw decal	
 			}
 			else
@@ -189,6 +200,7 @@ public class playerControl : MonoBehaviour {
         moveDirection *= moveSpeed;
         if (Input.GetKey(KeyCode.Space))
 		{
+			isGrounded = false;
             moveDirection.y = jumpSpeed;
 			model.animation.Play("Jump");
 		}
@@ -197,6 +209,7 @@ public class playerControl : MonoBehaviour {
 	#region COLLISIONS
 	void OnTriggerEnter(Collider other)//On collision with stuff
 	{
+		print("hit");
 		if(other.gameObject.tag == "Ground")//if the ground
 			isGrounded = true;
 		
@@ -204,10 +217,10 @@ public class playerControl : MonoBehaviour {
 		//Object Collisions
 	}
 	
-	void OnTriggerExit(Collider other)//If leaving collision with stuff
-	{
-		if(other.gameObject.tag == "Ground")
-			isGrounded = false;
-	}	
+//	void OnTriggerExit(Collider other)//If leaving collision with stuff
+//	{
+//		if(other.gameObject.tag == "Ground")
+//			isGrounded = false;
+//	}	
 	#endregion
 }

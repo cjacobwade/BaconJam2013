@@ -264,6 +264,8 @@ public class playerControl : MonoBehaviour {
 		{
 			rigidbody.velocity = Vector3.zero;
 			isGrounded = true;
+			//audio.Play();
+			
 		}
 		if(other.gameObject.tag == "Wall"||other.gameObject.tag == "Door")
 			print("wall");
@@ -272,7 +274,7 @@ public class playerControl : MonoBehaviour {
 		if(other.gameObject.tag == "Bush")
 		{
 			if(heldBulbs < 5)
-				heldBulbs++;
+				heldBulbs = 5;
 		}
 		
 		if(other.gameObject.tag == "Finish")

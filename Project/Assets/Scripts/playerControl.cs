@@ -204,6 +204,7 @@ public class playerControl : MonoBehaviour {
 				clone.rigidbody.velocity = transform.TransformDirection(new Vector3(1,throwHeight/10,0) *throwSpeed);
 			Physics.IgnoreCollision(clone.collider, this.collider);
 			throwHeight = .001f;
+			heldBulbs--;
 			//Play sound
 		}
 	}
@@ -233,6 +234,13 @@ public class playerControl : MonoBehaviour {
 			print("Wall!");
 			moveDirection.x = -moveSpeed;
 		//Object Collisions
+		
+		if(other.gameObject.tag == "Bush")
+		{
+			print ("Bush");
+			if(heldBulbs < 5)
+				heldBulbs++;
+		}
 	}
 	
 //	void OnTriggerExit(Collider other)//If leaving collision with stuff

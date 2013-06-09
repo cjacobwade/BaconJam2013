@@ -27,5 +27,8 @@ public class Bulb : MonoBehaviour {
 			voice.clip = sound[0];
 			voice.Play();
 		}
+		
+		if(other.tag == "Button")
+			other.animation.Play("Press");
 	}
 }

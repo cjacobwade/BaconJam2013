@@ -20,7 +20,7 @@ public class Bulb : MonoBehaviour {
 	
 	void OnTriggerEnter(Collider other)
 	{
-		if(other.tag == "Wall"|| other.tag == "Ground")
+		if(other.tag == "Wall"|| other.tag == "Ground"|| other.tag == "Door")
 		{
 			rigidbody.velocity = Vector3.zero;
 			rigidbody.useGravity = false;
@@ -29,6 +29,6 @@ public class Bulb : MonoBehaviour {
 		}
 		
 		if(other.tag == "Button")
-			other.animation.Play("Press");
+			other.GetComponent<Button>().IsPressed();
 	}
 }

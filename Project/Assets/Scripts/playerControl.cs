@@ -262,7 +262,7 @@ public class playerControl : MonoBehaviour {
 	{
 		if(other.gameObject.tag == "Ground")//if the ground
 			isGrounded = true;
-		if(other.gameObject.tag == "Wall")
+		if(other.gameObject.tag == "Wall"||other.gameObject.tag == "Door")
 			moveDirection.y -= gravity * Time.deltaTime;
 		
 		if(other.gameObject.tag == "Bush")

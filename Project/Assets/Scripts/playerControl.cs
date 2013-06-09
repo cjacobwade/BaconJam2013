@@ -169,8 +169,8 @@ public class playerControl : MonoBehaviour {
 			if(!isAiming)
 				model.animation.Play("Windup");
 			isAiming = true;
-			if(throwHeight<10)
-				throwHeight *= 1.02f;
+			if(throwHeight < 10)
+				throwHeight += .13f;
 			//Stop moving
 			if(model.animation["JumpPose"].enabled||!model.animation.isPlaying)
 				model.animation.Play("WindupPose");
@@ -198,9 +198,12 @@ public class playerControl : MonoBehaviour {
 			model.animation[ "Throw" ].speed = animSpeed[3];
 			model.animation.Play("Throw");
 			clone = Instantiate(bulb,hand.transform.position,transform.rotation) as GameObject;
-			clone.rigidbody.velocity = transform.TransformDirection(new Vector3(1,throwHeight/10,0) *throwSpeed);
+			if(throwHeight < .7f)
+				clone.rigidbody.velocity = transform.TransformDirection(new Vector3(1,0,0));
+			else
+				clone.rigidbody.velocity = transform.TransformDirection(new Vector3(1,throwHeight/10,0) *throwSpeed);
 			Physics.IgnoreCollision(clone.collider, this.collider);
-			throwHeight = 5;
+			throwHeight = .001f;
 			//Play sound
 		}
 	}

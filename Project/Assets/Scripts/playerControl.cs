@@ -266,6 +266,7 @@ public class playerControl : MonoBehaviour {
 			isGrounded = true;
 		}
 		if(other.gameObject.tag == "Wall"||other.gameObject.tag == "Door")
+			print("wall");
 			moveDirection.y -= gravity * Time.deltaTime;
 		
 		if(other.gameObject.tag == "Bush")
@@ -273,6 +274,9 @@ public class playerControl : MonoBehaviour {
 			if(heldBulbs < 5)
 				heldBulbs++;
 		}
+		
+		if(other.gameObject.tag == "Finish")
+			print("FUCK");
 	}
 	
 	void OnTriggerExit(Collider other)//If leaving collision with stuff

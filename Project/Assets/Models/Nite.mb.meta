@@ -1,0 +1,114 @@
+fileFormatVersion: 2
+guid: 1fd481e53ec7d2548be21e9463c48aae
+ModelImporter:
+  serializedVersion: 15
+  fileIDToRecycleName:
+    100000: joint1
+    100002: joint10
+    100004: joint11
+    100006: joint12
+    100008: joint13
+    100010: joint18
+    100012: joint19
+    100014: joint2
+    100016: joint20
+    100018: joint21
+    100020: joint22
+    100022: joint23
+    100024: joint24
+    100026: joint25
+    100028: joint26
+    100030: joint3
+    100032: joint4
+    100034: joint5
+    100036: joint6
+    100038: joint7
+    100040: joint8
+    100042: joint9
+    100044: //RootNode
+    100046: pCube1
+    100048: pPlane1
+    400000: joint1
+    400002: joint10
+    400004: joint11
+    400006: joint12
+    400008: joint13
+    400010: joint18
+    400012: joint19
+    400014: joint2
+    400016: joint20
+    400018: joint21
+    400020: joint22
+    400022: joint23
+    400024: joint24
+    400026: joint25
+    400028: joint26
+    400030: joint3
+    400032: joint4
+    400034: joint5
+    400036: joint6
+    400038: joint7
+    400040: joint8
+    400042: joint9
+    400044: //RootNode
+    400046: pCube1
+    400048: pPlane1
+    2300000: pPlane1
+    3300000: pPlane1
+    4300000: pCube1
+    4300002: pPlane1
+    7400000: Take 001
+    9500000: //RootNode
+    13700000: pCube1
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    animationCompression: 1
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 0
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+  tangentSpace:
+    normalSmoothAngle: 60
+    splitTangentsAcrossUV: 1
+    normalImportMode: 0
+    tangentImportMode: 1
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    handles: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: 
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  additionalBone: 1
+  animationType: 2
+  userData: 

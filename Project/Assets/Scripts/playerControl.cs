@@ -5,10 +5,21 @@ public class playerControl : MonoBehaviour {
 	
 	//Objects
 	public Camera camera1;
-	public GameObject cube;
+	public GameObject model;
 	public GameObject bulb;
 	public GameObject hand;
 	private GameObject clone;
+		
+	//Animations
+	public enum Stance //Different stances player can be in
+	{
+		Idle,
+		Walk,
+		Windup,
+		Throw,
+		Jump
+	};
+	public Stance playerStance;
 	
 	#region Camera Control
 		public float cameraSpeed;//How fast does the cam rotate
@@ -39,7 +50,7 @@ public class playerControl : MonoBehaviour {
 	// Use this for initialization
 	void Start () 
 	{
-		Physics.IgnoreCollision(clone.collider, this.collider);
+		playerStance = Stance.Idle;//Starting stance is idle
 	}
 	
 	// Update is called once per frame
@@ -47,8 +58,10 @@ public class playerControl : MonoBehaviour {
 	{
 		CameraControl();
 		PlayerControl();
-		if (isGrounded) 
+		if (isGrounded)
+		{
 			Grounded();
+		}
 		else
 			moveDirection.y -= gravity * Time.deltaTime;
 		transform.Translate(moveDirection*Time.deltaTime);
@@ -63,8 +76,8 @@ public class playerControl : MonoBehaviour {
 		transform.rotation = Quaternion.Euler(0,transform.rotation.eulerAngles.y,0);
 		
 		//Rotate Player Model
-		cube.transform.Rotate(new Vector3(0,Time.deltaTime*yRot*rotateSpeed,0));
-		cube.transform.rotation = Quaternion.Euler(0,transform.rotation.eulerAngles.y,0);
+		model.transform.Rotate(new Vector3(0,Time.deltaTime*yRot*rotateSpeed,0));
+		model.transform.rotation = Quaternion.Euler(0,transform.rotation.eulerAngles.y,0);
 		
 		CameraMinMax();//Vertical axis controls
 	}
@@ -99,6 +112,19 @@ public class playerControl : MonoBehaviour {
 	{
 		if(!isAiming)
 		{
+			if(Input.GetKey(KeyCode.W)||Input.GetKey(KeyCode.A)||Input.GetKey(KeyCode.S)||Input.GetKey(KeyCode.D))
+			{
+				if(isGrounded)
+					model.animation.Play("Walk");
+			}
+			else
+			{
+				if(isGrounded)
+				{
+					if(model.animation["Walk"].enabled||!model.animation.isPlaying)
+						model.animation.Play("Idle");
+				}
+			}
 			#region WASD
 			if(Input.GetKey(KeyCode.W))
 				transform.Translate(new Vector3(moveSpeed,0,0)*Time.deltaTime);
@@ -121,6 +147,7 @@ public class playerControl : MonoBehaviour {
 			{
 				//Stop moving
 				isAiming = true;
+				model.animation.Play("Windup");
 				//Draw decal	
 			}
 			else
@@ -136,6 +163,7 @@ public class playerControl : MonoBehaviour {
 			{
 				isAiming = false;
 				//Shoot Projectile
+				model.animation.Play("Throw");
 				ThrowBulb();
 				
 				//Start Moving Again
@@ -150,6 +178,7 @@ public class playerControl : MonoBehaviour {
 	{
 		clone = Instantiate(bulb,hand.transform.position,transform.rotation) as GameObject;
 		clone.rigidbody.velocity = transform.TransformDirection(new Vector3(1,0,0) *throwSpeed);
+		Physics.IgnoreCollision(clone.collider, this.collider);
 	}
 	
 	void Grounded() //When on the ground
@@ -159,7 +188,10 @@ public class playerControl : MonoBehaviour {
         moveDirection = transform.TransformDirection(moveDirection);
         moveDirection *= moveSpeed;
         if (Input.GetKey(KeyCode.Space))
+		{
             moveDirection.y = jumpSpeed;
+			model.animation.Play("Jump");
+		}
 	}
 	
 	#region COLLISIONS

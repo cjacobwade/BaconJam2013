@@ -44,19 +44,20 @@ public class playerControl : MonoBehaviour {
 		int layerMask = 1 << 9;
 		public float throwSpeed;
 		private bool isAiming = false;
+		public int levelNum;
 	#endregion
 	
 	// Use this for initialization
 	void Start () 
 	{
-		
+		levelNum = Application.loadedLevel;
 	}
 	
 	// Update is called once per frame
 	void FixedUpdate () 
 	{
 		if(transform.position.y < -50)
-			Application.LoadLevel(0);
+			Application.LoadLevel(Application.loadedLevel);
 		moveDirection.y -= gravity * Time.deltaTime;
 		model.animation[ "Walk" ].speed = animSpeed[0];
 		aim = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -279,8 +280,13 @@ public class playerControl : MonoBehaviour {
 		
 		if(other.gameObject.tag == "Finish")
 		{
-			//If something go to this level
-			Application.LoadLevel(0);
+			
+			if(levelNum == 0)
+				Application.LoadLevel("Level1");
+			if(levelNum == 1)
+				Application.LoadLevel("Level2");
+			if(levelNum == 2)
+				Application.Quit();
 			//else
 			//Application.loadlevel(0);
 			

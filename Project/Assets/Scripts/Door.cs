@@ -29,11 +29,12 @@ public class Door : MonoBehaviour {
 	{
 		if(!open)
 		{	
+			open = true; 
 			animation["Open"].speed = 1;
 			animation.Play("Open");
 			audio.Play();
 			lighter.light.enabled = true;
-			open = true; 
+			
 		}
 	}
 	

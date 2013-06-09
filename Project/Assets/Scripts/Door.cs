@@ -5,6 +5,7 @@ public class Door : MonoBehaviour {
 	
 	public bool open = false;
 	public GameObject lighter;
+	public GameObject openColliders;
 	
 	// Use this for initialization
 	void Start () {
@@ -17,6 +18,7 @@ public class Door : MonoBehaviour {
 		if(open && !animation["Open"].enabled)
 		{
 			collider.enabled = false;
+			openColliders.SetActive(true);
 			rigidbody.isKinematic = false;
 			animation.Play("StayOpen");
 			
@@ -36,7 +38,7 @@ public class Door : MonoBehaviour {
 	
 	public void CloseDoor()
 	{
-		if(!open)
+		if(open)
 		{
 			animation["Open"].speed = -1;
 			animation.Play("Open");

@@ -32,7 +32,7 @@ public class playerControl : MonoBehaviour {
 		//Jumping
 		public int jumpSpeed;
 		public int gravity;
-		private bool isGrounded;
+		public bool isGrounded;
 	
 		//Throwing
 		public float throwHeight;
@@ -261,8 +261,10 @@ public class playerControl : MonoBehaviour {
 	void OnTriggerEnter(Collider other)//On collision with stuff
 	{
 		if(other.gameObject.tag == "Ground")//if the ground
+		{
 			rigidbody.velocity = Vector3.zero;
 			isGrounded = true;
+		}
 		if(other.gameObject.tag == "Wall"||other.gameObject.tag == "Door")
 			moveDirection.y -= gravity * Time.deltaTime;
 		

@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
+[RequireComponent(typeof(CharacterController))]
 public class characterControl : MonoBehaviour {
 	
 	//Objects
@@ -10,6 +11,7 @@ public class characterControl : MonoBehaviour {
 	public GameObject hand;
 	public GameObject handOrb;
 	public GameObject[] clone;
+	public CharacterController controller;
 		
 	//Animations
 	public float[] animSpeed;
@@ -32,7 +34,7 @@ public class characterControl : MonoBehaviour {
 		//Jumping
 		public int jumpSpeed;
 		public int gravity;
-		private bool isGrounded;
+		public bool isGrounded;
 	
 		//Throwing
 		public float throwHeight;
@@ -57,7 +59,6 @@ public class characterControl : MonoBehaviour {
 	{
 		if(transform.position.y < -50)
 			Application.LoadLevel(0);
-		//moveDirection.y -= gravity * Time.deltaTime;
 		model.animation[ "Walk" ].speed = animSpeed[0];
 		aim = Camera.main.ScreenPointToRay(Input.mousePosition);
 		CameraControl();
@@ -72,7 +73,7 @@ public class characterControl : MonoBehaviour {
 		}
 		else
 		{
-		//transform.Translate(moveDirection*Time.deltaTime);
+			controller.SimpleMove(transform.up*-gravity);
 		}
 	}
 	
@@ -81,12 +82,12 @@ public class characterControl : MonoBehaviour {
 		yRot = Input.GetAxis("Mouse X");
 		
 		//Rotate Player Controller
-		//transform.Rotate(new Vector3(0,Time.deltaTime*yRot*rotateSpeed,0));
-		//transform.rotation = Quaternion.Euler(0,transform.rotation.eulerAngles.y,0);
+		transform.Rotate(new Vector3(0,Time.deltaTime*yRot*rotateSpeed,0));
+		transform.rotation = Quaternion.Euler(0,transform.rotation.eulerAngles.y,0);
 		
 		//Rotate Player Model
-		//model.transform.Rotate(new Vector3(0,Time.deltaTime*yRot*rotateSpeed,0));
-		//model.transform.rotation = Quaternion.Euler(0,transform.rotation.eulerAngles.y,0);
+		model.transform.Rotate(new Vector3(0,Time.deltaTime*yRot*rotateSpeed,0));
+		model.transform.rotation = Quaternion.Euler(0,transform.rotation.eulerAngles.y,0);
 		
 		CameraMinMax();//Vertical axis controls
 	}
@@ -127,10 +128,10 @@ public class characterControl : MonoBehaviour {
 				{
 					model.animation.Play("Walk");
 					if(heldBulbs > 0)
-						{
-							handOrb.gameObject.renderer.enabled = true;
-							handOrb.gameObject.light.enabled = true;
-						}
+					{
+						handOrb.gameObject.renderer.enabled = true;
+						handOrb.gameObject.light.enabled = true;
+					}
 				}
 			}
 			else
@@ -157,22 +158,26 @@ public class characterControl : MonoBehaviour {
 			#region WASD
 			if(Input.GetKey(KeyCode.W))
 			{
+				controller.SimpleMove(transform.right*moveSpeed);
 				//transform.Translate(new Vector3(moveSpeed,0,0)*Time.deltaTime);
 			}
 			
 			if(Input.GetKey(KeyCode.S))
 			{
+				controller.SimpleMove(transform.right*-moveSpeed);
 				//transform.Translate(new Vector3(-moveSpeed*.8f,0,0)*Time.deltaTime);
 				model.animation["Walk"].speed = -animSpeed[0];
 			}
 			
 			if(Input.GetKey(KeyCode.A))
 			{
-			//	transform.Translate(new Vector3(0,0,moveSpeed*.7f)*Time.deltaTime);	
+				controller.SimpleMove(transform.forward*moveSpeed);
+				//	transform.Translate(new Vector3(0,0,moveSpeed*.7f)*Time.deltaTime);	
 			}
 			
 			if(Input.GetKey(KeyCode.D))
 			{
+				controller.SimpleMove(transform.forward*-moveSpeed);
 				//transform.Translate(new Vector3(0,0,-moveSpeed*.7f)*Time.deltaTime);
 			}
 			#endregion
@@ -181,11 +186,7 @@ public class characterControl : MonoBehaviour {
 		#region Mouse
 		
 		if(Input.GetMouseButton(0))
-		{
-			//rigidbody.velocity = Vector3.zero;
 			Windup();
-		}
-
 		else
 		{
 			if(isAiming)
@@ -198,19 +199,18 @@ public class characterControl : MonoBehaviour {
 	{
 		if(heldBulbs > 0)
 		{
-			
 			handOrb.gameObject.renderer.enabled = true;
-				handOrb.gameObject.light.enabled = true;
+			handOrb.gameObject.light.enabled = true;
 			if(!isAiming)
 				model.animation.Play("Windup");
 			isAiming = true;
+			
+			//The longer mouse is held the farther you throw
 			if(throwHeight < 10)
 				throwHeight += .13f;
-			//Stop moving
-			if(model.animation["JumpPose"].enabled||!model.animation.isPlaying)
-				model.animation.Play("WindupPose");
 			
-			//Draw decal	
+			if(model.animation["JumpPose"].enabled||!model.animation.isPlaying)
+				model.animation.Play("WindupPose");	
 		}
 		else
 		{
@@ -232,45 +232,58 @@ public class characterControl : MonoBehaviour {
 		if(heldBulbs > 0)
 		{
 			isAiming = false;
-			//Shoot Projectile
+			
+			//Throw animation
 			model.animation[ "Throw" ].speed = animSpeed[3];
 			model.animation.Play("Throw");
+			
+			//Make orb
 			Destroy(clone[orbIndex]);
 			clone[orbIndex] = Instantiate(bulb,hand.transform.position,transform.rotation) as GameObject;
 			if(throwHeight < .7f)
 				clone[orbIndex].rigidbody.velocity = transform.TransformDirection(new Vector3(1,0,0));
 			else
 				clone[orbIndex].rigidbody.velocity = transform.TransformDirection(new Vector3(1,throwHeight/10,0) *throwSpeed);
+			
+			//Hide handorb
 			handOrb.gameObject.renderer.enabled = false;
 			handOrb.gameObject.light.enabled = false;
-			throwHeight = .001f;
-			Physics.IgnoreCollision(clone[orbIndex].collider, this.collider);
+			
+			throwHeight = .001f;//Reset throw height counter
+			Physics.IgnoreCollision(clone[orbIndex].collider, this.collider);//Don't collide with orbs
 			heldBulbs--;
-			//Play sound
 		}
 	}
 	
 	void Grounded() //When on the ground
 	{
-		//print("Is Grounded");
-//        moveDirection = new Vector3(0, 0, 0);
-//        moveDirection = transform.TransformDirection(moveDirection);
-//        moveDirection *= moveSpeed;
+        moveDirection = new Vector3(0, 0, 0);
+       moveDirection = transform.TransformDirection(moveDirection);
+        moveDirection *= moveSpeed;
         if (Input.GetKey(KeyCode.Space))
 		{
-			isGrounded = false;
-            //moveDirection.y = jumpSpeed;
+			//controller.Move(transform.up*jumpSpeed);
+            moveDirection.y = jumpSpeed;
 			model.animation.Play("Jump");
+			isGrounded = false;
 		}
+		controller.Move(moveDirection*Time.deltaTime);
 	}
 	
 	#region COLLISIONS
+	
+	void OnControllerColliderHit(ControllerColliderHit hit)
+	{
+		if(hit.gameObject.tag == "Ground")
+			isGrounded = true;
+	}
+	
 	void OnTriggerEnter(Collider other)//On collision with stuff
 	{
-		if(other.gameObject.tag == "Ground")//if the ground
-			//rigidbody.velocity = Vector3.zero;
-			isGrounded = true;
-		if(other.gameObject.tag == "Wall"||other.gameObject.tag == "Door")
+//		if(other.gameObject.tag == "Ground")
+//			isGrounded = true;
+		
+		//if(other.gameObject.tag == "Wall"||other.gameObject.tag == "Door")
 			//moveDirection.y -= gravity * Time.deltaTime;
 		
 		if(other.gameObject.tag == "Bush")
@@ -282,8 +295,8 @@ public class characterControl : MonoBehaviour {
 	
 	void OnTriggerExit(Collider other)//If leaving collision with stuff
 	{
-		if(other.gameObject.tag == "Ground")
-			isGrounded = false;
+		//if(other.gameObject.tag == "Ground")
+			//isGrounded = false;
 		//moveDirection.y -= gravity * Time.deltaTime;
 		//rigidbody.velocity = Vector3.zero;
 	}	

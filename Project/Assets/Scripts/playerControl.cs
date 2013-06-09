@@ -8,6 +8,7 @@ public class playerControl : MonoBehaviour {
 	public GameObject model;
 	public GameObject bulb;
 	public GameObject hand;
+	public GameObject handOrb;
 	public GameObject[] clone;
 		
 	//Animations
@@ -58,6 +59,10 @@ public class playerControl : MonoBehaviour {
 		aim = Camera.main.ScreenPointToRay(Input.mousePosition);
 		CameraControl();
 		PlayerControl();
+//		if(heldBulbs > 0)
+//			handOrb.gameObject.renderer.enabled = true;
+//		else
+//			handOrb.gameObject.renderer.enabled = false;
 		if (isGrounded)
 		{
 			Grounded();
@@ -122,7 +127,14 @@ public class playerControl : MonoBehaviour {
 				if(isGrounded)
 				{
 					if(model.animation["Walk"].enabled||model.animation["JumpPose"].enabled||!model.animation.isPlaying)
+					{
 						model.animation.Play("Idle");
+						if(heldBulbs > 0)
+						{
+							handOrb.gameObject.renderer.enabled = true;
+							handOrb.gameObject.light.enabled = true;
+						}
+					}
 				}
 				if(!isGrounded)
 				{
@@ -176,6 +188,7 @@ public class playerControl : MonoBehaviour {
 			//Stop moving
 			if(model.animation["JumpPose"].enabled||!model.animation.isPlaying)
 				model.animation.Play("WindupPose");
+			
 			//Draw decal	
 		}
 		else
@@ -193,6 +206,7 @@ public class playerControl : MonoBehaviour {
 		{
 			orbIndex++;
 			Destroy(clone[orbIndex]);
+	
 		}
 		if(Physics.Raycast(aim,out hit,Mathf.Infinity,layerMask))//For this to land, there needs to be colliders on the other objects
 			{
@@ -210,6 +224,8 @@ public class playerControl : MonoBehaviour {
 				clone[orbIndex].rigidbody.velocity = transform.TransformDirection(new Vector3(1,0,0));
 			else
 				clone[orbIndex].rigidbody.velocity = transform.TransformDirection(new Vector3(1,throwHeight/10,0) *throwSpeed);
+			handOrb.gameObject.renderer.enabled = false;
+			handOrb.gameObject.light.enabled = false;
 			throwHeight = .001f;
 			Physics.IgnoreCollision(clone[orbIndex].collider, this.collider);
 			heldBulbs--;

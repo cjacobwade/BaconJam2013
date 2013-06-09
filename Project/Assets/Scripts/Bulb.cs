@@ -10,6 +10,7 @@ public class Bulb : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 	
+		transform.Rotate(Random.Range(0,10),Random.Range(0,10),Random.Range(0,10));
 	}
 	
 	// Update is called once per frame

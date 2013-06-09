@@ -8,7 +8,7 @@ public class playerControl : MonoBehaviour {
 	public GameObject model;
 	public GameObject bulb;
 	public GameObject hand;
-	private GameObject clone;
+	public GameObject[] clone;
 		
 	//Animations
 	public float[] animSpeed;
@@ -36,6 +36,8 @@ public class playerControl : MonoBehaviour {
 		//Throwing
 		public float throwHeight;
 		public int heldBulbs;
+		public int orbIndex = 0;
+		public int orbNumber;
 		private Ray aim;
 		private RaycastHit hit;
 		int layerMask = 1 << 9;
@@ -185,10 +187,16 @@ public class playerControl : MonoBehaviour {
 	
 	void ThrowBulb()
 	{
+		if(orbIndex >= orbNumber)
+			orbIndex = 0;
+		if(orbIndex < orbNumber)
+		{
+			orbIndex++;
+			Destroy(clone[orbIndex]);
+		}
 		if(Physics.Raycast(aim,out hit,Mathf.Infinity,layerMask))//For this to land, there needs to be colliders on the other objects
 			{
 				print(Input.mousePosition);
-				print("HIT");
 			}
 		if(heldBulbs > 0)
 		{
@@ -197,13 +205,13 @@ public class playerControl : MonoBehaviour {
 			//Shoot Projectile
 			model.animation[ "Throw" ].speed = animSpeed[3];
 			model.animation.Play("Throw");
-			clone = Instantiate(bulb,hand.transform.position,transform.rotation) as GameObject;
+			clone[orbIndex] = Instantiate(bulb,hand.transform.position,transform.rotation) as GameObject;
 			if(throwHeight < .7f)
-				clone.rigidbody.velocity = transform.TransformDirection(new Vector3(1,0,0));
+				clone[orbIndex].rigidbody.velocity = transform.TransformDirection(new Vector3(1,0,0));
 			else
-				clone.rigidbody.velocity = transform.TransformDirection(new Vector3(1,throwHeight/10,0) *throwSpeed);
-			Physics.IgnoreCollision(clone.collider, this.collider);
+				clone[orbIndex].rigidbody.velocity = transform.TransformDirection(new Vector3(1,throwHeight/10,0) *throwSpeed);
 			throwHeight = .001f;
+			Physics.IgnoreCollision(clone[orbIndex].collider, this.collider);
 			heldBulbs--;
 			//Play sound
 		}
@@ -237,7 +245,6 @@ public class playerControl : MonoBehaviour {
 		
 		if(other.gameObject.tag == "Bush")
 		{
-			print ("Bush");
 			if(heldBulbs < 5)
 				heldBulbs++;
 		}
